@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Beranda &middot; Parkir Kampus{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <span class="eyebrow">{{ nama_kampus }}</span>
+  <h1>Cek Ketersediaan Parkir Kampus Secara Real-Time</h1>
+  <p class="lead">
+    Pantau slot parkir yang masih tersedia di setiap area sebelum berangkat,
+    supaya tidak perlu berputar-putar mencari tempat.
+  </p>
+</section>
+
+<div class="stat-grid">
+  <div class="stat-card">
+    <div class="stat-label">Kendaraan Terdaftar</div>
+    <div class="stat-value">{{ total_kendaraan }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Sedang Parkir</div>
+    <div class="stat-value accent">{{ sedang_parkir }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Slot Tersedia</div>
+    <div class="stat-value">{{ total_tersedia }}</div>
+    <div class="stat-sub">dari {{ total_kapasitas }} total slot</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Area Parkir</div>
+    <div class="stat-value">{{ total_area }}</div>
+  </div>
+</div>
+
+<div class="section-head">
+  <div>
+    <span class="kicker">Status per area</span>
+    <h2>Ketersediaan Slot Parkir</h2>
+  </div>
+</div>
+
+{% if daftar_area %}
+<div class="area-grid">
+  {% for area in daftar_area %}
+    <div class="area-card">
+      <div class="area-card__head">
+        <div>
+          <div class="area-card__name">{{ area.nama_area }}</div>
+          {% if area.lokasi %}<div class="area-card__loc">{{ area.lokasi }}</div>{% endif %}
+        </div>
+        {% if area.penuh %}
+          <span class="badge badge--full">Penuh</span>
+        {% elif area.tersedia <= 5 %}
+          <span class="badge badge--warn">Hampir Penuh</span>
+        {% else %}
+          <span class="badge badge--ok">Tersedia</span>
+        {% endif %}
+      </div>
+      <div class="progress">
+        <div class="progress__bar {{ 'is-full' if area.penuh }}"
+             style="width: {{ (area.terpakai / area.kapasitas * 100) if area.kapasitas else 0 }}%;"></div>
+      </div>
+      <div class="area-card__meta">
+        <span>{{ area.terpakai }} / {{ area.kapasitas }} terisi</span>
+        <span>{{ area.tersedia }} slot kosong</span>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="table-wrap"><div class="empty-state">
+  <strong>Belum ada area parkir</strong>
+  Data area parkir akan tampil di sini setelah admin menambahkannya.
+</div></div>
+{% endif %}
+{% endblock %}
