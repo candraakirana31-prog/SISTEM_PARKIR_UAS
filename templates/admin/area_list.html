@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Area Parkir &middot; Parkir Kampus{% endblock %}
+
+{% block content %}
+<div class="section-head">
+  <div>
+    <span class="kicker">Master data</span>
+    <h1>Area Parkir</h1>
+  </div>
+  <a href="{{ url_for('admin.area_tambah') }}" class="btn btn--accent">+ Tambah Area</a>
+</div>
+
+<div class="table-wrap">
+  {% if daftar_area %}
+  <table>
+    <thead>
+      <tr><th>Nama Area</th><th>Lokasi</th><th>Kapasitas</th><th>Terisi</th><th>Tersedia</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for a in daftar_area %}
+      <tr>
+        <td><strong>{{ a.nama_area }}</strong></td>
+        <td>{{ a.lokasi or '-' }}</td>
+        <td>{{ a.kapasitas }}</td>
+        <td>{{ a.terpakai }}</td>
+        <td>
+          {% if a.penuh %}
+            <span class="badge badge--full">Penuh</span>
+          {% else %}
+            <span class="badge badge--ok">{{ a.tersedia }} slot</span>
+          {% endif %}
+        </td>
+        <td style="display:flex; gap:8px;">
+          <a href="{{ url_for('admin.area_edit', area_id=a.id) }}" class="btn btn--outline btn--sm">Edit</a>
+          <form method="POST" action="{{ url_for('admin.area_hapus', area_id=a.id) }}"
+                data-confirm="Hapus area {{ a.nama_area }}? Riwayat transaksi di area ini juga akan terhapus.">
+            <button type="submit" class="btn btn--danger btn--sm">Hapus</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state">
+    <strong>Belum ada area parkir</strong>
+    Tambahkan area seperti "Gedung A" atau "Parkir Timur" untuk mulai mengelola slot.
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
