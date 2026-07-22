@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if mode == 'edit' else 'Tambah' }} Kendaraan &middot; Parkir Kampus{% endblock %}
+
+{% block content %}
+<div class="section-head">
+  <div>
+    <span class="kicker">{{ 'Ubah data' if mode == 'edit' else 'Data baru' }}</span>
+    <h1>{{ 'Edit Kendaraan' if mode == 'edit' else 'Daftarkan Kendaraan' }}</h1>
+  </div>
+  <a href="{{ url_for('admin.kendaraan_list') }}" class="btn btn--outline btn--sm">Kembali</a>
+</div>
+
+<div class="form-card">
+  <form method="POST">
+    <div class="form-grid">
+      <div class="field">
+        <label for="plat_nomor">Plat Nomor</label>
+        <input type="text" id="plat_nomor" name="plat_nomor" required
+               value="{{ kendaraan.plat_nomor if kendaraan else '' }}" placeholder="B 1234 ABC">
+      </div>
+      <div class="field">
+        <label for="jenis_kendaraan">Jenis Kendaraan</label>
+        <select id="jenis_kendaraan" name="jenis_kendaraan" required>
+          <option value="" disabled {{ 'selected' if not kendaraan }}>Pilih jenis</option>
+          {% for j in jenis_kendaraan_list %}
+            <option value="{{ j }}" {{ 'selected' if kendaraan and kendaraan.jenis_kendaraan == j }}>{{ j }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="nama_pemilik">Nama Pemilik</label>
+      <input type="text" id="nama_pemilik" name="nama_pemilik" required
+             value="{{ kendaraan.nama_pemilik if kendaraan else '' }}">
+    </div>
+
+    <div class="form-grid">
+      <div class="field">
+        <label for="nim_nip">NIM / NIP <span class="hint">(opsional)</span></label>
+        <input type="text" id="nim_nip" name="nim_nip" value="{{ kendaraan.nim_nip if kendaraan else '' }}">
+      </div>
+      <div class="field">
+        <label for="jenis_pengguna">Kategori Pengguna</label>
+        <select id="jenis_pengguna" name="jenis_pengguna" required>
+          <option value="" disabled {{ 'selected' if not kendaraan }}>Pilih kategori</option>
+          {% for j in jenis_pengguna_list %}
+            <option value="{{ j }}" {{ 'selected' if kendaraan and kendaraan.jenis_pengguna == j }}>{{ j }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="kontak">Kontak <span class="hint">(opsional)</span></label>
+      <input type="tel" id="kontak" name="kontak" value="{{ kendaraan.kontak if kendaraan else '' }}">
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn--accent">{{ 'Simpan Perubahan' if mode == 'edit' else 'Daftarkan' }}</button>
+      <a href="{{ url_for('admin.kendaraan_list') }}" class="btn btn--outline">Batal</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
