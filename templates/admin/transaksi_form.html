@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Check-in Kendaraan &middot; Parkir Kampus{% endblock %}
+
+{% block content %}
+<div class="section-head">
+  <div>
+    <span class="kicker">Transaksi baru</span>
+    <h1>Check-in Kendaraan</h1>
+  </div>
+  <a href="{{ url_for('admin.transaksi_list') }}" class="btn btn--outline btn--sm">Kembali</a>
+</div>
+
+<div class="form-card">
+  {% if not daftar_kendaraan or not daftar_area %}
+    <div class="empty-state">
+      <strong>Data belum lengkap</strong>
+      {% if not daftar_kendaraan %}Belum ada kendaraan terdaftar. <a href="{{ url_for('admin.kendaraan_tambah') }}">Daftarkan kendaraan</a> dulu.{% endif %}
+      {% if not daftar_area %}<br>Belum ada area parkir. <a href="{{ url_for('admin.area_tambah') }}">Tambah area parkir</a> dulu.{% endif %}
+    </div>
+  {% else %}
+  <form method="POST">
+    <div class="field">
+      <label for="kendaraan_id">Kendaraan</label>
+      <select id="kendaraan_id" name="kendaraan_id" required>
+        <option value="" disabled selected>Pilih kendaraan</option>
+        {% for k in daftar_kendaraan %}
+          <option value="{{ k.id }}" {{ 'disabled' if k.sedang_parkir }}>
+            {{ k.plat_nomor }} &mdash; {{ k.nama_pemilik }}{{ ' (sedang parkir)' if k.sedang_parkir }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="area_id">Area Parkir</label>
+      <select id="area_id" name="area_id" required>
+        <option value="" disabled selected>Pilih area</option>
+        {% for a in daftar_area %}
+          <option value="{{ a.id }}" {{ 'disabled' if a.penuh }}>
+            {{ a.nama_area }} ({{ a.tersedia }} slot kosong){{ ' - PENUH' if a.penuh }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="petugas">Nama Petugas</label>
+      <input type="text" id="petugas" name="petugas" required>
+    </div>
+
+    <div class="field">
+      <label for="catatan">Catatan <span class="hint">(opsional)</span></label>
+      <textarea id="catatan" name="catatan" placeholder="mis. helm dititipkan, kondisi kendaraan, dll."></textarea>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn--accent">Catat Check-in</button>
+      <a href="{{ url_for('admin.transaksi_list') }}" class="btn btn--outline">Batal</a>
+    </div>
+  </form>
+  {% endif %}
+</div>
+{% endblock %}
