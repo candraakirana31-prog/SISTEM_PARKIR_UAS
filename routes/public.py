@@ -20,7 +20,7 @@ def index():
     daftar_area = AreaParkir.query.order_by(AreaParkir.nama_area.asc()).all()
 
     return render_template(
-        "public/index.html",
+        "pages/index.html",
         nama_kampus=current_app.config.get("NAMA_KAMPUS"),
         total_kendaraan=total_kendaraan,
         total_area=total_area,
