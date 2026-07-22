@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Transaksi Parkir &middot; Parkir Kampus{% endblock %}
+
+{% block content %}
+<div class="section-head">
+  <div>
+    <span class="kicker">Aktivitas parkir</span>
+    <h1>Transaksi Parkir</h1>
+  </div>
+  <a href="{{ url_for('admin.transaksi_checkin') }}" class="btn btn--accent">+ Check-in Kendaraan</a>
+</div>
+
+<div class="toolbar">
+  <div class="filter-pills">
+    <a href="{{ url_for('admin.transaksi_list') }}" class="filter-pill {{ 'is-active' if not status }}">Semua</a>
+    {% for s in status_list %}
+      <a href="{{ url_for('admin.transaksi_list', status=s) }}" class="filter-pill {{ 'is-active' if status == s }}">{{ s }}</a>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="table-wrap">
+  {% if daftar_transaksi %}
+  <table>
+    <thead>
+      <tr>
+        <th>Plat Nomor</th><th>Area</th><th>Masuk</th><th>Keluar</th><th>Durasi</th><th>Status</th><th>Petugas</th><th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for t in daftar_transaksi %}
+      <tr>
+        <td class="mono">{{ t.kendaraan.plat_nomor }}</td>
+        <td>{{ t.area.nama_area }}</td>
+        <td>{{ t.waktu_masuk.strftime('%d/%m/%Y %H:%M') }}</td>
+        <td>{{ t.waktu_keluar.strftime('%d/%m/%Y %H:%M') if t.waktu_keluar else '-' }}</td>
+        <td>{{ t.durasi_display }}</td>
+        <td>
+          {% if t.status == 'Masih Parkir' %}
+            <span class="status-pill status-pill--parkir">Masih Parkir</span>
+          {% else %}
+            <span class="status-pill status-pill--keluar">Sudah Keluar</span>
+          {% endif %}
+        </td>
+        <td>{{ t.petugas }}</td>
+        <td style="display:flex; gap:8px;">
+          {% if t.status == 'Masih Parkir' %}
+          <form method="POST" action="{{ url_for('admin.transaksi_checkout', transaksi_id=t.id) }}"
+                data-confirm="Check-out kendaraan {{ t.kendaraan.plat_nomor }} sekarang?">
+            <button type="submit" class="btn btn--dark btn--sm">Check-out</button>
+          </form>
+          {% endif %}
+          <form method="POST" action="{{ url_for('admin.transaksi_hapus', transaksi_id=t.id) }}"
+                data-confirm="Hapus data transaksi ini?">
+            <button type="submit" class="btn btn--danger btn--sm">Hapus</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state">
+    <strong>Belum ada transaksi</strong>
+    {% if status %}Tidak ada transaksi dengan status "{{ status }}".{% else %}Mulai catat kendaraan yang masuk lewat tombol Check-in.{% endif %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
