@@ -16,5 +16,4 @@ class Config:
     SQLALCHEMY_DATABASE_URI = DATABASE_URL
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    # Nama kampus, tampil di halaman publik & judul aplikasi
     NAMA_KAMPUS = os.environ.get("NAMA_KAMPUS", "Universitas Bale Bandung")
