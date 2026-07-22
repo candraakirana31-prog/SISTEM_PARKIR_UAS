@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% block title %}Dashboard &middot; Parkir Kampus{% endblock %}
+
+{% block content %}
+<div class="section-head">
+  <div>
+    <span class="kicker">Ringkasan sistem</span>
+    <h1>Dashboard Admin</h1>
+  </div>
+  <a href="{{ url_for('admin.transaksi_checkin') }}" class="btn btn--accent">+ Check-in Kendaraan</a>
+</div>
+
+<div class="stat-grid">
+  <div class="stat-card">
+    <div class="stat-label">Kendaraan Terdaftar</div>
+    <div class="stat-value">{{ total_kendaraan }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Sedang Parkir</div>
+    <div class="stat-value accent">{{ sedang_parkir }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Total Area</div>
+    <div class="stat-value">{{ total_area }}</div>
+    <div class="stat-sub">{{ total_kapasitas }} total slot</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Total Transaksi</div>
+    <div class="stat-value">{{ total_transaksi }}</div>
+  </div>
+</div>
+
+<div class="two-col">
+  <div class="chart-card">
+    <h3>Kunjungan 7 Hari Terakhir</h3>
+    <div class="bar-chart">
+      {% set max_val = (rekap_values | max) if rekap_values and (rekap_values | max) > 0 else 1 %}
+      {% for label in rekap_labels %}
+        <div class="bar-chart__col">
+          <span class="bar-chart__val">{{ rekap_values[loop.index0] }}</span>
+          <div class="bar-chart__bar" style="height: {{ (rekap_values[loop.index0] / max_val * 100) }}%;"></div>
+          <span class="bar-chart__label">{{ label }}</span>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <h3>Kendaraan per Jenis Pengguna</h3>
+    <div class="legend-list">
+      {% for jenis, jumlah in rekap_pengguna.items() %}
+        <div class="legend-row">
+          <span><span class="dot"></span>{{ jenis }}</span>
+          <strong>{{ jumlah }}</strong>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<div class="section-head" style="margin-top: 28px;">
+  <div>
+    <span class="kicker">Status area saat ini</span>
+    <h2>Kapasitas per Area Parkir</h2>
+  </div>
+  <a href="{{ url_for('admin.area_list') }}" class="btn btn--outline btn--sm">Kelola Area</a>
+</div>
+
+{% if daftar_area %}
+<div class="area-grid">
+  {% for area in daftar_area %}
+    <div class="area-card">
+      <div class="area-card__head">
+        <div class="area-card__name">{{ area.nama_area }}</div>
+        {% if area.penuh %}
+          <span class="badge badge--full">Penuh</span>
+        {% else %}
+          <span class="badge badge--ok">{{ area.tersedia }} kosong</span>
+        {% endif %}
+      </div>
+      <div class="progress">
+        <div class="progress__bar {{ 'is-full' if area.penuh }}"
+             style="width: {{ (area.terpakai / area.kapasitas * 100) if area.kapasitas else 0 }}%;"></div>
+      </div>
+      <div class="area-card__meta"><span>{{ area.terpakai }} / {{ area.kapasitas }} terisi</span></div>
+    </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="table-wrap"><div class="empty-state">
+  <strong>Belum ada area parkir</strong>
+  <a href="{{ url_for('admin.area_tambah') }}" class="btn btn--accent btn--sm" style="margin-top:10px;">Tambah Area Parkir</a>
+</div></div>
+{% endif %}
+
+<div class="section-head" style="margin-top: 28px;">
+  <div>
+    <span class="kicker">Aktivitas terbaru</span>
+    <h2>Transaksi Terakhir</h2>
+  </div>
+  <a href="{{ url_for('admin.transaksi_list') }}" class="btn btn--outline btn--sm">Lihat Semua</a>
+</div>
+
+<div class="table-wrap">
+  {% if transaksi_terbaru %}
+  <table>
+    <thead>
+      <tr>
+        <th>Plat Nomor</th><th>Area</th><th>Waktu Masuk</th><th>Status</th><th>Petugas</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for t in transaksi_terbaru %}
+      <tr>
+        <td class="mono">{{ t.kendaraan.plat_nomor }}</td>
+        <td>{{ t.area.nama_area }}</td>
+        <td>{{ t.waktu_masuk.strftime('%d/%m/%Y %H:%M') }}</td>
+        <td>
+          {% if t.status == 'Masih Parkir' %}
+            <span class="status-pill status-pill--parkir">Masih Parkir</span>
+          {% else %}
+            <span class="status-pill status-pill--keluar">Sudah Keluar</span>
+          {% endif %}
+        </td>
+        <td>{{ t.petugas }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state">
+    <strong>Belum ada transaksi</strong>
+    Data transaksi check-in/check-out akan tampil di sini.
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
