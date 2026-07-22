@@ -1,0 +1,23 @@
+<header class="navbar">
+  <div class="navbar__inner">
+    <a href="{{ url_for('public.index') }}" class="navbar__brand">
+      <span class="brand-badge">P</span>
+      <span class="brand-text">Parkir<strong>Kampus</strong></span>
+    </a>
+
+    <nav class="navbar__links">
+      <a href="{{ url_for('public.index') }}" class="{{ 'is-active' if request.endpoint == 'public.index' }}">Beranda</a>
+
+      {% if session.get('admin_id') %}
+        <a href="{{ url_for('admin.dashboard') }}" class="{{ 'is-active' if request.endpoint and request.endpoint.startswith('admin.') }}">Dashboard</a>
+        <a href="{{ url_for('admin.kendaraan_list') }}" class="{{ 'is-active' if request.endpoint == 'admin.kendaraan_list' }}">Kendaraan</a>
+        <a href="{{ url_for('admin.area_list') }}" class="{{ 'is-active' if request.endpoint == 'admin.area_list' }}">Area Parkir</a>
+        <a href="{{ url_for('admin.transaksi_list') }}" class="{{ 'is-active' if request.endpoint == 'admin.transaksi_list' }}">Transaksi</a>
+        <span class="navbar__user">{{ session.get('admin_nama') }}</span>
+        <a href="{{ url_for('auth.logout') }}" class="btn btn--ghost btn--sm">Keluar</a>
+      {% else %}
+        <a href="{{ url_for('auth.login') }}" class="btn btn--accent btn--sm">Login Admin</a>
+      {% endif %}
+    </nav>
+  </div>
+</header>
