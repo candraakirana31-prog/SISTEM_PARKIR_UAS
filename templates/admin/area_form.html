@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit' if mode == 'edit' else 'Tambah' }} Area &middot; Parkir Kampus{% endblock %}
+
+{% block content %}
+<div class="section-head">
+  <div>
+    <span class="kicker">{{ 'Ubah data' if mode == 'edit' else 'Data baru' }}</span>
+    <h1>{{ 'Edit Area Parkir' if mode == 'edit' else 'Tambah Area Parkir' }}</h1>
+  </div>
+  <a href="{{ url_for('admin.area_list') }}" class="btn btn--outline btn--sm">Kembali</a>
+</div>
+
+<div class="form-card">
+  <form method="POST">
+    <div class="field">
+      <label for="nama_area">Nama Area</label>
+      <input type="text" id="nama_area" name="nama_area" required
+             value="{{ area.nama_area if area else '' }}" placeholder="mis. Gedung Rektorat">
+    </div>
+
+    <div class="form-grid">
+      <div class="field">
+        <label for="lokasi">Lokasi <span class="hint">(opsional)</span></label>
+        <input type="text" id="lokasi" name="lokasi" value="{{ area.lokasi if area else '' }}">
+      </div>
+      <div class="field">
+        <label for="kapasitas">Kapasitas (jumlah slot)</label>
+        <input type="number" id="kapasitas" name="kapasitas" min="1" required
+               value="{{ area.kapasitas if area else '' }}">
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="keterangan">Keterangan <span class="hint">(opsional)</span></label>
+      <textarea id="keterangan" name="keterangan">{{ area.keterangan if area else '' }}</textarea>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn--accent">{{ 'Simpan Perubahan' if mode == 'edit' else 'Tambah Area' }}</button>
+      <a href="{{ url_for('admin.area_list') }}" class="btn btn--outline">Batal</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
