@@ -1,3 +1,17 @@
+import os
+
+@public_bp.route("/debug-fs")
+def debug_fs():
+    root = current_app.root_path
+    info = {
+        "root_path": root,
+        "root_contents": os.listdir(root),
+        "templates_exists": os.path.isdir(os.path.join(root, "templates")),
+    }
+    if info["templates_exists"]:
+        info["templates_contents"] = os.listdir(os.path.join(root, "templates"))
+    return info
+
 from flask import Blueprint, render_template, current_app
 
 from extensions import db
